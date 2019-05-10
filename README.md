@@ -21,6 +21,6 @@ Create a config.ini file a the top of the projet :
 
 then launch the build & the post init
 
-	./start.sh
+	./main.sh
 
 
