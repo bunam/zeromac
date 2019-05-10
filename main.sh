@@ -7,9 +7,19 @@ export INIT_URL=https://raw.githubusercontent.com/bunam/zeromac/master/init/init
 # mini tools box
 function echoer() { echo "$@" 1>&2 ; }
 function die() { echoer "$@" ; exit 1 ; }
-function px_str_AntiSlashNtoN() { awk '{gsub(/\\n/,"\n'${1}'")}1' ;}
-function px_str_AntiSlashTtoT() { awk '{gsub(/\\t/,"\t")}1' ;}
-function px_autodoc() { sed -n -e '/# main/,$p' "${1}" | grep -E "^[$(printf '\t')]+[a-z0-9]+){1} #" | sed -e "s@) # @ @g" | px_str_AntiSlashNtoN "\t\t" | px_str_AntiSlashTtoT ;}
+function px_str_AntiSlashNtoN() { awk '{gsub(/\\n/,"\n'${1}'")}1' ; }
+function px_str_AntiSlashTtoT() { awk '{gsub(/\\t/,"\t")}1' ; }
+function px_autodoc() { sed -n -e '/# main/,$p' "${1}" | grep -E "^[$(printf '\t')]+[a-z0-9]+){1} #" | sed -e "s@) # @ @g" | px_str_AntiSlashNtoN "\t\t" | px_str_AntiSlashTtoT ; }
+
+if (command -v readlink &> /dev/null) ; then
+	#shellcheck disable=SC2155
+	export CUR_DIR="$( cd "$( dirname "$(readlink "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}" )" )" && pwd )"
+else
+	#shellcheck disable=SC2155
+	export CUR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+fi
+
+source config.ini || die "Troubles to load config.ini !"
 
 # API related
 function zm_machines_list() {
@@ -49,15 +59,15 @@ function machine_create() {
 	id=$(jq -e --raw-output '.id' <<<$retJSON ) || die "Failed to having machine id !"
 	# waiting a little for having the ip
 	# TODO do a loop until having IP
-	sleep 20
+	sleep 40
 	machine_info "${id}"
 }
 
 function machine_init() {
 	# 1 : machine id
 	machine_info "${1}"
-	# TODO continue
-	ssh -o ConnectionAttempts=100 admin@$public_ip 'export REMOTIX_EMAIL='"${REMOTIX_EMAIL}"' ; curl -fsSL '"${INIT_URL}"' '
+ 	rsync --stats --human-readable -v -a "${CUR_DIR}" "admin@${public_ip}:"
+	ssh -t admin@$public_ip 'cd zeromac ; ./init/init.sh '
 }
 
 function machine_info() {
@@ -107,7 +117,6 @@ case "${1}" in
 		echo "Use : $0"
 		echo "Loaded config : config.ini"
 		px_autodoc "${0}" | sort
-		exit 1
 		;;
 
 esac

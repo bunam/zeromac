@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 
-# hop plus cool comme ça 
+source main.sh
+
+# init/xcode-cli-tools.sh
+
+# marche po
+echo $PASSWORD | sudo -S echo "admin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# marche pos encore : hop plus cool comme ça 
 change-resolution 1920 1080
 
 # remotix cloud
 mkdir -p ~/tmp/remotix/
 cd ~/tmp/remotix/
-curl -O https://downloads.remotixcloud.com/agent-mac/RemotixAgent.pkg
+curl -fsSLO https://downloads.remotixcloud.com/agent-mac/RemotixAgent.pkg 
 
 cat << EOF > config.rxasettings
 
@@ -55,4 +62,8 @@ hide_main_window_on_startup=true
 
 EOF
 
-open RemotixAgent.pkg
+# semble fonctionnel
+sudo installer -pkg RemotixAgent.pkg -target /
+
+# par encore au point
+echo -e "\n${PASSWORD}\n" | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
