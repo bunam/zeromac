@@ -29,7 +29,8 @@ function zm_machine_create() {
     --data '{
       "name": "Test Box 1",
       "type": "1cpu",
-      "password": "${PASSWORD}",
+      "password": "'"$PASSWORD"'",
+      "ssh_pubkey": "'"$SSH_PUB_KEY"'",
       "image": "10.14"
     }'
 }
@@ -46,13 +47,17 @@ function machine_create() {
 	jq . <<<$retJSON
 	mess=$(jq -e '.error' <<<$retJSON ) && die "Failed to create machine ! : $mess"
 	id=$(jq -e --raw-output '.id' <<<$retJSON ) || die "Failed to having machine id !"
+	# waiting a little for having the ip
+	# TODO do a loop until having IP
+	sleep 20
 	machine_info "${id}"
 }
 
 function machine_init() {
 	# 1 : machine id
 	machine_info "${1}"
-	echo -e "${PASSWORD}\n" | ssh -o ConnectionAttempts=100 admin@$public_ip
+	# TODO continue
+	ssh -o ConnectionAttempts=100 admin@$public_ip 'export REMOTIX_EMAIL='"${REMOTIX_EMAIL}"' ; curl -fsSL '"${INIT_URL}"' '
 }
 
 function machine_info() {

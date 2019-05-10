@@ -7,6 +7,10 @@ https://zeromac.com test post install script
 - install remotix cloud (better than vnc)
 - other stuffs
 
+# requirement
+
+command line jq
+
 # doc remotix
 
 https://remotixcloud.com/help/agentmac-massinstall/
@@ -17,6 +21,7 @@ Create a config.ini file a the top of the projet :
 
 	export API_TOKEN=<>
 	export PASSWORD=<>
+	export SSH_PUB_KEY=<>	
 	export REMOTIX_EMAIL=<>
 
 then launch the build & the post init
