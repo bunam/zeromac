@@ -2,15 +2,13 @@
 
 source main.sh
 
-# init/xcode-cli-tools.sh
+# big fun
+echo $PASSWORD | sudo -S sh -c "echo 'admin ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
 
-# marche po
-echo $PASSWORD | sudo -S echo "admin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+# nicer 
+/usr/local/bin/change-resolution 1920 1080
 
-# marche pos encore : hop plus cool comme ça 
-change-resolution 1920 1080
-
-# remotix cloud
+# remotix cloud , at the end connect via the VNC provided to allow Remotix (TODO i have to cheat with Apple script to automate this)
 mkdir -p ~/tmp/remotix/
 cd ~/tmp/remotix/
 curl -fsSLO https://downloads.remotixcloud.com/agent-mac/RemotixAgent.pkg 
@@ -66,4 +64,4 @@ EOF
 sudo installer -pkg RemotixAgent.pkg -target /
 
 # par encore au point
-echo -e "\n${PASSWORD}\n" | /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
